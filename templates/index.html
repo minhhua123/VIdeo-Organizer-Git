@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block nav %}
+    <form class="d-flex mx-1 my-2" role="search" method="GET" action="/">
+        <input
+            class="form-control me-2"
+            type="search"
+            name="q"
+            placeholder="Search"
+            aria-label="Search"
+            style="width: 300px;"
+            value="{{ request.args.get('q', '') }}"
+        />
+        <button class="btn btn-dark" type="submit" aria-label="Search">
+            <i class="bi bi-search"></i>
+        </button>
+    </form>
+{% endblock %}
+{% block main %}
+<!-- Generated with CoPilot, refined by Jack -->
+<form method="GET" action="/">
+    <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+
+        <!-- PLATFORM FILTER -->
+        <div class="mb-3">
+            <span class="form-label fw-semibold">Platform:</span>
+
+            <div class="d-flex justify-content-center flex-wrap gap-2 my-3">
+
+                <input type="checkbox" class="btn-check" name="platform[]" id="platform-youtube" value="youtube" {% if 'youtube' in request.args.getlist('platform[]') %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="platform-youtube">YouTube</label>
+
+                <input type="checkbox" class="btn-check" name="platform[]" id="platform-tiktok" value="tiktok" {% if 'tiktok' in request.args.getlist('platform[]') %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="platform-tiktok">TikTok</label>
+
+                <input type="checkbox" class="btn-check" name="platform[]" id="platform-instagram" value="instagram" {% if 'instagram' in request.args.getlist('platform[]') %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="platform-instagram">Instagram</label>
+
+            </div>
+        </div>
+
+        {% if types %}
+            <!-- CONTENT TYPE FILTER -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Content Type:</label>
+
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    {% for type in types %}
+                        <input type="checkbox" class="btn-check" name="type[]" id="type-{{ type }}" value="{{ type }}" {% if type in request.args.getlist('type[]') %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary rounded-pill" for="type-{{ type }}">
+                            {{ type }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+
+        {% if moods %}
+            <!-- MOOD FILTER -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Mood:</label>
+
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    {% for mood in moods %}
+                        <input type="checkbox" class="btn-check" name="mood[]" id="mood-{{ mood }}" value="{{ mood }}" {% if mood in request.args.getlist('mood[]') %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary rounded-pill" for="mood-{{ mood }}">
+                            {{ mood }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if tags %}
+            <!-- TAG FILTER -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Tag:</label>
+                <select name="tag" class="form-select">
+                    <option value="all" {% if request.args.get('tag') == 'all' %}selected{% endif %}>All Tags</option>
+                    {% for tag in tags %}
+                        <option value="{{ tag }}" {% if request.args.get('tag') == tag %}selected{% endif %}>{{ tag }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
+        <!-- SORT DROPDOWN -->
+        <div class="mb-3">
+            <select name="sort" class="form-select">
+                <option disabled selected>Sort</option>
+                <option value="recent" {% if request.args.get('sort') == 'recent' %}selected{% endif %}>Sort: Recent</option>
+                <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Sort: Oldest</option>
+            </select>
+        </div>
+
+        <!-- SUBMIT BUTTON -->
+        <button type="submit" class="btn btn-success w-100">
+            Retrieve
+        </button>
+
+    </div>
+</form>
+
+<div class="container">
+    <div class="row g-4">
+
+        {% for video in videos %}
+        <div class="col-md-4 col-lg-3">
+
+            <a href="{{ video.link }}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit;">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="position-relative" style="height: 160px; border-radius: 6px; overflow:hidden;">
+                        <img src="{{ video.thumbnail_url }}" alt="Video thumbnail"
+                             style="width:100%; height:100%; object-fit:cover;">
+                        <div class="position-absolute top-50 start-50 translate-middle">
+                            <i class="bi bi-play-fill text-white" style="font-size: 48px;"></i>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title }}</h5>
+
+                        {% if video.platform %}
+                        <span class="badge bg-danger">{{ video.platform }}</span>
+                        {% endif %}
+
+                        {% if video.mood %}
+                        <span class="badge bg-info text-dark">{{ video.mood }}</span>
+                        {% endif %}
+
+                        {% if video.content_type %}
+                        <span class="badge bg-warning text-dark">{{ video.content_type }}</span>
+                        {% endif %}
+
+                        <div class="mt-2">
+                        {% for tag in video.tags %}
+                            <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 align-items-center">
+                        <a href="/delete/{{ video.id }}" class="btn btn-danger">Delete</a>
+                        <a href="/edit/{{ video.id }}" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+
+            </a>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+
+
+{% endblock %}
