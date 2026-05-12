@@ -4,6 +4,9 @@ video.db
 # Flask session files
 flask_session/
 
+# Generated thumbnails
+static/thumbnails/
+
 # Python cache
 __pycache__/
 *.pyc
