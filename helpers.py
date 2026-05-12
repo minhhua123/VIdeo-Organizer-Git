@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from flask import redirect, render_template, session
 from functools import wraps
 import re
+import os
 
 def apology(message, code=400):
     """Render message as an apology to user."""
@@ -71,7 +72,7 @@ def get_tiktok_thumbnail(url):
         return None
 
 
-def get_instagram_thumbnail(url, filename):
+def get_instagram_thumbnail(url):
     try:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -88,18 +89,43 @@ def get_instagram_thumbnail(url, filename):
             
         img_url = og["content"]
         
+        # Generate unique filename
+        base_name = "filename"
+        dir_path = "static/thumbnails"
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        existing_files = os.listdir(dir_path)
+        numbers = []
+        for f in existing_files:
+            if f.startswith(base_name):
+                rest = f[len(base_name):]
+                num_str = ''.join(c for c in rest if c.isdigit())
+                if num_str:
+                    try:
+                        numbers.append(int(num_str))
+                    except ValueError:
+                        pass
+        next_num = max(numbers) + 1 if numbers else 1
+        extension = os.path.splitext(img_url)[1]
+        if not extension:
+            extension = '.jpg'
+        filename = f"{base_name}{next_num}{extension}"
+        
         # 3. Download the actual image bytes immediately
         img_file = requests.get(img_url).content
         
         # 4. Save to a local file
-        with open(f"static/thumbnails/{filename}", 'wb') as file:
+        file_path = f"{dir_path}/{filename}"
+        with open(file_path, 'wb') as file:
             file.write(img_file)
             
         print(f"Successfully saved permanent image as {filename}")
-        return True
+        return file_path
     except Exception as error:
         print(f"Error: {error}")
         return False
+
+
 
 
 def get_youtube_title(url):

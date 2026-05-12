@@ -1,6 +1,6 @@
 # Video Inspo
 ## Video Demo:  <URL HERE> https://youtu.be/79cgQiZo6z8
-#### Description:
+## Description:
 Video Inspo is a streamlined web application for content creators to collect, categorize, and revisit video inspiration across platforms. It allows you to register, login, logout and reset your account's password. It lets you add and remove video links from YouTube, TikTok, and Instagram. You can assign moods, content types, and tags, add personal notes, and use those as filters to organize. Whether you’re planning campaigns, building edits, or tracking creative references, the organizer keeps your entire inspiration library searchable, structured, and ready whenever you need it.
 
 The project folder includes a static folder, which contains the neccesary image files and a css file in case I wanted to customize any element's style (I didn't use it in this case because Bootstrap's styling is sufficient enough). It also has a template folder including all the html templates:
