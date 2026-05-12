@@ -67,9 +67,45 @@ def get_tiktok_thumbnail(url):
             params={"url": url},
             timeout=5
         ).json()
-        return oembed.get("thumbnail_url")
-    except:
-        return None
+        img_url = oembed.get("thumbnail_url")
+        
+        if not img_url:
+            print("Thumbnail URL not found.")
+            return False
+        
+        # Generate unique filename
+        base_name = "filename"
+        dir_path = "static/thumbnails"
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        existing_files = os.listdir(dir_path)
+        numbers = []
+        for f in existing_files:
+            if f.startswith(base_name):
+                rest = f[len(base_name):]
+                num_str = ''.join(c for c in rest if c.isdigit())
+                if num_str:
+                    try:
+                        numbers.append(int(num_str))
+                    except ValueError:
+                        pass
+        next_num = max(numbers) + 1 if numbers else 1
+        extension = '.jpg'
+        filename = f"{base_name}{next_num}{extension}"
+        
+        # Download the actual image bytes
+        img_file = requests.get(img_url).content
+        
+        # Save to a local file
+        file_path = f"{dir_path}/{filename}"
+        with open(file_path, 'wb') as file:
+            file.write(img_file)
+            
+        print(f"Successfully saved permanent image as {filename}")
+        return file_path
+    except Exception as error:
+        print(f"Error: {error}")
+        return False
 
 
 def get_instagram_thumbnail(url):
