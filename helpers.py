@@ -106,9 +106,7 @@ def get_instagram_thumbnail(url):
                     except ValueError:
                         pass
         next_num = max(numbers) + 1 if numbers else 1
-        extension = os.path.splitext(img_url)[1]
-        if not extension:
-            extension = '.jpg'
+        extension = '.jpg'
         filename = f"{base_name}{next_num}{extension}"
         
         # 3. Download the actual image bytes immediately
