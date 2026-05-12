@@ -362,8 +362,7 @@ def delete(video_id):
         return render_template("delete.html", video=video[0])
     elif request.method == "POST":
         thumbnail_url = video[0]["thumbnail"]
-        if thumbnail_url and thumbnail_url.startswith("/static/thumbnails/"):
-            file_path = thumbnail_url.lstrip("/")
+        file_path = thumbnail_url.lstrip("/")
         if os.path.exists(file_path):
             os.remove(file_path)
             print("File deleted.")
