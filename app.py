@@ -2,6 +2,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
 
 from helpers import apology, get_instagram_thumbnail, get_tiktok_thumbnail, get_youtube_thumbnail, get_instagram_title, get_tiktok_title, get_youtube_title, shorten_title, login_required, extract_urls
 
@@ -360,6 +361,14 @@ def delete(video_id):
     if request.method == "GET":
         return render_template("delete.html", video=video[0])
     elif request.method == "POST":
+        thumbnail_url = video[0]["thumbnail"]
+        if thumbnail_url and thumbnail_url.startswith("/static/thumbnails/"):
+            file_path = thumbnail_url.lstrip("/")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print("File deleted.")
+        else:
+            print("The thumbnail file does not exist.")
         db.execute("DELETE FROM videos WHERE id = ?", video_id)
         flash("Video deleted successfully!")
         return redirect("/")
